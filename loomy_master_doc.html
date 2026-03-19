@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Loomy — Master Reference Doc</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f4f0;
+      margin: 0;
+      padding: 2rem;
+      color: #1a1a18;
+    }
+    .wrap { display: flex; flex-direction: column; gap: 2rem; max-width: 960px; margin: 0 auto; }
+
+    /* ── COVER ── */
+    .cover {
+      border-radius: 20px;
+      background: linear-gradient(135deg, #FF3C6E 0%, #FF6B8A 60%, #FFB3C4 100%);
+      padding: 3rem 2.5rem 2.5rem;
+      color: #fff;
+    }
+    .cover-eyebrow { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.75; margin: 0 0 12px; }
+    .cover-title { font-size: 48px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.02em; }
+    .cover-tagline { font-size: 18px; font-weight: 400; opacity: 0.9; margin: 0 0 2rem; line-height: 1.5; }
+    .cover-meta { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+    .cover-meta-item { font-size: 13px; opacity: 0.8; }
+    .cover-meta-item strong { display: block; font-weight: 600; opacity: 1; margin-bottom: 2px; }
+
+    /* ── TOC ── */
+    .toc-card { border-radius: 16px; background: #fff; border: 0.5px solid rgba(0,0,0,0.1); padding: 1.5rem 1.75rem; }
+    .toc-title { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: #888780; margin: 0 0 1rem; }
+    .toc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem 2rem; }
+    .toc-item { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: #1a1a18; text-decoration: none; padding: 4px 0; }
+    .toc-item:hover { color: #FF3C6E; }
+    .toc-num { font-size: 11px; font-weight: 500; color: #FF3C6E; min-width: 18px; }
+
+    /* ── SECTION CARD ── */
+    .scard { border-radius: 16px; border: 0.5px solid rgba(0,0,0,0.12); background: #fff; overflow: hidden; }
+    .scard-header { padding: 1.25rem 1.75rem 1rem; display: flex; align-items: center; gap: 1rem; border-bottom: 0.5px solid rgba(0,0,0,0.08); }
+    .scard-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .icon-pink { background: #FFE8EE; }
+    .icon-amber { background: #FEF3E2; }
+    .icon-purple { background: #EEEDFE; }
+    .icon-teal { background: #E0F5F3; }
+    .icon-slate { background: #EEF0F5; }
+    .icon-green { background: #E5F5E8; }
+    .scard-header-text .snum { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: #aaa; margin: 0 0 2px; }
+    .scard-header-text h2 { font-size: 20px; font-weight: 600; margin: 0; color: #1a1a18; }
+    .scard-body { padding: 1.5rem 1.75rem; display: flex; flex-direction: column; gap: 1.25rem; }
+
+    /* ── GENERIC PIECES ── */
+    .label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: #888780; margin: 0 0 8px; }
+
+    .prose { font-size: 14px; line-height: 1.7; color: #3a3a38; margin: 0; }
+
+    .pill-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .pill { font-size: 12px; font-weight: 500; padding: 4px 12px; border-radius: 20px; }
+    .pill-pink { background: #FFE8EE; color: #CC1E42; }
+    .pill-amber { background: #FEF3E2; color: #854F0B; }
+    .pill-purple { background: #EEEDFE; color: #3C3489; }
+    .pill-teal { background: #E0F5F3; color: #0D6B62; }
+    .pill-slate { background: #EEF0F5; color: #3D4460; }
+
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+
+    .inset { border-radius: 12px; padding: 1rem 1.25rem; }
+    .inset-pink { background: #FFF0F4; }
+    .inset-amber { background: #FEF3E2; }
+    .inset-purple { background: #F3F2FE; }
+    .inset-teal { background: #E8FAF8; }
+    .inset-slate { background: #F0F1F7; }
+    .inset-green { background: #EFF9F1; }
+    .inset-yellow { background: #FFFBE6; }
+
+    .inset-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; margin: 0 0 8px; }
+    .inset-pink .inset-title { color: #CC1E42; }
+    .inset-amber .inset-title { color: #854F0B; }
+    .inset-purple .inset-title { color: #534AB7; }
+    .inset-teal .inset-title { color: #0D6B62; }
+    .inset-slate .inset-title { color: #3D4460; }
+    .inset-green .inset-title { color: #1E6B34; }
+    .inset-yellow .inset-title { color: #856A00; }
+
+    ul.clean { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    ul.clean li { font-size: 13px; line-height: 1.55; padding-left: 14px; position: relative; color: #3a3a38; }
+    ul.clean li::before { content: ""; position: absolute; left: 0; top: 7px; width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: 0.5; }
+
+    .pink-dot::before { background: #FF3C6E !important; opacity: 1 !important; }
+    .amber-dot::before { background: #BA7517 !important; opacity: 1 !important; }
+    .purple-dot::before { background: #534AB7 !important; opacity: 1 !important; }
+    .teal-dot::before { background: #0A9E8A !important; opacity: 1 !important; }
+    .red-dot::before { background: #D93025 !important; opacity: 1 !important; }
+    .green-dot::before { background: #1E8A40 !important; opacity: 1 !important; }
+
+    .divider { border: none; border-top: 0.5px solid rgba(0,0,0,0.09); margin: 0.25rem 0; }
+
+    /* ── FEATURE CARDS ── */
+    .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .feat { border-radius: 12px; padding: 1.1rem 1.25rem 1.25rem; }
+    .feat-icon { font-size: 22px; margin-bottom: 8px; }
+    .feat-name { font-size: 14px; font-weight: 600; margin: 0 0 6px; }
+    .feat-desc { font-size: 13px; line-height: 1.6; margin: 0 0 10px; }
+    .feat-sub { font-size: 11.5px; line-height: 1.5; opacity: 0.85; }
+    .feat-pink { background: #FFF0F4; }
+    .feat-pink .feat-name { color: #CC1E42; }
+    .feat-pink .feat-desc, .feat-pink .feat-sub { color: #6B0E24; }
+    .feat-amber { background: #FEF3E2; }
+    .feat-amber .feat-name { color: #854F0B; }
+    .feat-amber .feat-desc, .feat-amber .feat-sub { color: #412402; }
+    .feat-purple { background: #F3F2FE; }
+    .feat-purple .feat-name { color: #3C3489; }
+    .feat-purple .feat-desc, .feat-purple .feat-sub { color: #26215C; }
+    .feat-teal { background: #E8FAF8; }
+    .feat-teal .feat-name { color: #0D6B62; }
+    .feat-teal .feat-desc, .feat-teal .feat-sub { color: #074A44; }
+
+    /* ── COMPETITOR TABLE ── */
+    .comp-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .comp-table thead tr { background: #1a1a18; }
+    .comp-table thead th { padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: #fff; }
+    .comp-table thead th.loomy-col { background: #FF3C6E; color: #fff; }
+    .comp-table tbody tr:nth-child(even) { background: #fafaf8; }
+    .comp-table tbody td { padding: 9px 14px; border-bottom: 0.5px solid rgba(0,0,0,0.07); color: #3a3a38; vertical-align: middle; }
+    .comp-table tbody td.loomy-col { background: #FFF0F4; font-weight: 600; color: #CC1E42; }
+    .check { color: #1E8A40; font-weight: 600; }
+    .cross { color: #ccc; }
+    .partial { color: #BA7517; font-size: 11.5px; font-weight: 500; }
+
+    /* ── PERSONA MINI CARDS ── */
+    .persona-mini { border-radius: 12px; padding: 1.1rem 1.25rem 1.25rem; }
+    .pm-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .pm-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+    .pm-d-avatar { background: #FAEEDA; color: #633806; }
+    .pm-p-avatar { background: #EEEDFE; color: #3C3489; }
+    .pm-name { font-size: 16px; font-weight: 600; margin: 0; }
+    .pm-tagline { font-size: 12px; margin: 0; }
+    .pm-d { background: #FAEEDA; }
+    .pm-d .pm-name { color: #412402; }
+    .pm-d .pm-tagline { color: #633806; }
+    .pm-p { background: #EEEDFE; }
+    .pm-p .pm-name { color: #26215C; }
+    .pm-p .pm-tagline { color: #3C3489; }
+    .pm-section { margin-top: 10px; }
+    .pm-section-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 5px; }
+    .pm-d .pm-section-label { color: #854F0B; }
+    .pm-p .pm-section-label { color: #534AB7; }
+    .pm-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }
+    .pm-list li { font-size: 12.5px; line-height: 1.5; padding-left: 12px; position: relative; }
+    .pm-d .pm-list li { color: #412402; }
+    .pm-d .pm-list li::before { content: ""; position: absolute; left: 0; top: 6px; width: 4px; height: 4px; border-radius: 50%; background: #BA7517; }
+    .pm-p .pm-list li { color: #26215C; }
+    .pm-p .pm-list li::before { content: ""; position: absolute; left: 0; top: 6px; width: 4px; height: 4px; border-radius: 50%; background: #534AB7; }
+
+    /* loyalty mini */
+    .loyalty-mini { display: flex; gap: 8px; align-items: center; margin-top: 4px; }
+    .ldot { width: 9px; height: 9px; border-radius: 50%; }
+    .ldot-d-fill { background: #BA7517; }
+    .ldot-d-empty { background: #EFD3A0; }
+    .ldot-p-fill { background: #534AB7; }
+    .ldot-p-empty { background: #C4C0E8; }
+    .lbadge { font-size: 10.5px; font-weight: 600; padding: 2px 9px; border-radius: 20px; }
+    .lbadge-d-hi { background: #EF9F27; color: #412402; }
+    .lbadge-d-med { background: #FAC775; color: #633806; }
+    .lbadge-p-hi { background: #7F77DD; color: #EEEDFE; }
+
+    /* ── SCENARIOS ── */
+    .scenario { border-radius: 12px; padding: 1.1rem 1.25rem 1.25rem; }
+    .sc-pink { background: #FFF0F4; }
+    .sc-slate { background: #F0F1F7; }
+    .sc-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+    .sc-num { font-size: 11px; font-weight: 700; background: #FF3C6E; color: #fff; border-radius: 6px; padding: 3px 8px; flex-shrink: 0; margin-top: 1px; }
+    .sc-title { font-size: 14px; font-weight: 600; color: #1a1a18; margin: 0 0 3px; }
+    .sc-who { font-size: 12px; color: #888; margin: 0; }
+    .sc-body { font-size: 13px; line-height: 1.68; color: #3a3a38; margin: 0 0 10px; }
+    .sc-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+    .sc-tag { font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 20px; }
+    .sc-pink .sc-tag { background: #FFCCD7; color: #7B0E26; }
+    .sc-slate .sc-tag { background: #DEE0EC; color: #2D3460; }
+
+    /* ── IDEATION ── */
+    .idea-step { display: flex; gap: 12px; align-items: flex-start; }
+    .idea-step-num { width: 28px; height: 28px; border-radius: 50%; background: #FF3C6E; color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .idea-step-body h4 { font-size: 13.5px; font-weight: 600; color: #1a1a18; margin: 0 0 4px; }
+    .idea-step-body p { font-size: 13px; line-height: 1.6; color: #555; margin: 0; }
+    .idea-connector { width: 1px; height: 20px; background: rgba(255,60,110,0.3); margin-left: 14px; }
+
+    /* ── FEEDBACK ── */
+    .fb-item { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-bottom: 0.5px solid rgba(0,0,0,0.07); }
+    .fb-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .fb-badge { font-size: 10.5px; font-weight: 600; padding: 3px 9px; border-radius: 20px; flex-shrink: 0; white-space: nowrap; margin-top: 1px; }
+    .fb-badge-hi { background: #FFCCD7; color: #7B0E26; }
+    .fb-badge-med { background: #FEF3E2; color: #854F0B; }
+    .fb-badge-idea { background: #EEEDFE; color: #3C3489; }
+    .fb-text h4 { font-size: 13.5px; font-weight: 600; color: #1a1a18; margin: 0 0 3px; }
+    .fb-text p { font-size: 12.5px; line-height: 1.55; color: #555; margin: 0; }
+    .fb-text .quote { font-size: 12px; font-style: italic; color: #888; margin-top: 5px; line-height: 1.5; }
+
+    /* ── NEXT STEPS ── */
+    .ns-item { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 0.5px solid rgba(0,0,0,0.07); }
+    .ns-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .ns-check { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #FF3C6E; flex-shrink: 0; margin-top: 1px; }
+    .ns-text h4 { font-size: 13.5px; font-weight: 600; color: #1a1a18; margin: 0 0 2px; }
+    .ns-text p { font-size: 12.5px; color: #666; margin: 0; line-height: 1.5; }
+    .ns-pri { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 10px; margin-left: 8px; vertical-align: middle; }
+    .pri-critical { background: #FFCCD7; color: #7B0E26; }
+    .pri-high { background: #FEE8C4; color: #7A3F00; }
+    .pri-med { background: #EEEDFE; color: #3C3489; }
+
+    /* working items */
+    .win-item { display: flex; gap: 10px; align-items: flex-start; padding: 9px 0; border-bottom: 0.5px solid rgba(0,0,0,0.07); }
+    .win-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .win-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .win-text h4 { font-size: 13.5px; font-weight: 600; color: #1a1a18; margin: 0 0 3px; }
+    .win-text p { font-size: 12.5px; line-height: 1.55; color: #555; margin: 0; }
+
+    @media (max-width: 600px) {
+      .grid2, .feature-grid, .toc-grid { grid-template-columns: 1fr; }
+      .grid3 { grid-template-columns: 1fr; }
+      .cover-title { font-size: 36px; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ═══════════════════════════════════
+       COVER
+  ═══════════════════════════════════ -->
+  <div class="cover">
+    <p class="cover-eyebrow">Master Reference Document</p>
+    <h1 class="cover-title">Loomy</h1>
+    <p class="cover-tagline">See the patterns in what inspires you.</p>
+    <div class="cover-meta">
+      <div class="cover-meta-item"><strong>Founder</strong>Temi Adeniyi</div>
+      <div class="cover-meta-item"><strong>Team</strong>Nidhi Bhogi · Lucas Rival</div>
+      <div class="cover-meta-item"><strong>Stage</strong>Lo-Fi Prototype → Hi-Fi</div>
+      <div class="cover-meta-item"><strong>Last Updated</strong>March 17, 2026</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       TABLE OF CONTENTS
+  ═══════════════════════════════════ -->
+  <div class="toc-card">
+    <p class="toc-title">Contents</p>
+    <div class="toc-grid">
+      <a href="#overview" class="toc-item"><span class="toc-num">01</span> Product Overview</a>
+      <a href="#features" class="toc-item"><span class="toc-num">02</span> Core Features</a>
+      <a href="#personas" class="toc-item"><span class="toc-num">03</span> User Personas</a>
+      <a href="#scenarios" class="toc-item"><span class="toc-num">04</span> Scenarios</a>
+      <a href="#competitors" class="toc-item"><span class="toc-num">05</span> Competitor Comparison</a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       01 — PRODUCT OVERVIEW
+  ═══════════════════════════════════ -->
+  <div class="scard" id="overview">
+    <div class="scard-header">
+      <div class="scard-icon icon-pink">🌀</div>
+      <div class="scard-header-text">
+        <p class="snum">01</p>
+        <h2>Product Overview</h2>
+      </div>
+    </div>
+    <div class="scard-body">
+
+      <div>
+        <p class="label">One-liner</p>
+        <div class="inset inset-pink">
+          <p style="font-size:15px; font-weight:500; color:#CC1E42; margin:0; line-height:1.6;">Loomy is a platform that helps creatives turn scattered inspiration into structured creative development.</p>
+        </div>
+      </div>
+
+      <div>
+        <p class="label">The Problem</p>
+        <div class="grid2">
+          <div class="inset inset-slate">
+            <p class="inset-title">What users experience today</p>
+            <ul class="clean">
+              <li class="pink-dot">Save thousands of visual references but can't find them when needed</li>
+              <li class="pink-dot">Inspiration stays scattered across platforms with no organization</li>
+              <li class="pink-dot">Zero structure to bridge inspiration and action</li>
+              <li class="pink-dot">Current tools built for scrolling, not studying or building</li>
+              <li class="pink-dot">Creators go uncredited across millions of saved images</li>
+            </ul>
+          </div>
+          <div class="inset inset-pink">
+            <p class="inset-title">The cycle that Loomy breaks</p>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#FF3C6E;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+                <span style="font-size:13px;color:#6B0E24;font-weight:500;">Inspired</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#FF3C6E;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+                <span style="font-size:13px;color:#6B0E24;font-weight:500;">Motivated</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#ccc;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div>
+                <span style="font-size:13px;color:#888;font-weight:500;font-style:italic;">Nothing happens — the gap Loomy closes</span>
+              </div>
+            </div>
+            <p style="font-size:12px;color:#CC1E42;margin:12px 0 0;line-height:1.5;">The gap between inspiration and action is the core problem. Not lack of discipline — lack of the right tools.</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p class="label">Target users</p>
+        <div class="inset inset-teal">
+          <p class="inset-title">Who Loomy is built for</p>
+          <p class="prose" style="color:#074A44;">Artists, fashion enthusiasts, interior designers, brand builders, and anyone who is endlessly inspired but perpetually stuck. The common thread: people who save inspiration constantly but never convert it into creative output. Not just visual artists — anyone with a creative practice that involves collecting references and building toward something.</p>
+        </div>
+      </div>
+
+      <div>
+        <p class="label">Key differentiator</p>
+        <div class="pill-row">
+          <span class="pill pill-pink">Inspiration → Action workflow</span>
+          <span class="pill pill-pink">Human-made content only</span>
+          <span class="pill pill-pink">Creator attribution built-in</span>
+          <span class="pill pill-pink">Context travels with every save</span>
+          <span class="pill pill-pink">Not just a save button — a workspace</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       02 — CORE FEATURES
+  ═══════════════════════════════════ -->
+  <div class="scard" id="features">
+    <div class="scard-header">
+      <div class="scard-icon icon-amber">🧵</div>
+      <div class="scard-header-text">
+        <p class="snum">02</p>
+        <h2>Core Features</h2>
+      </div>
+    </div>
+    <div class="scard-body">
+
+      <p class="label">IA Hierarchy</p>
+      <div class="inset inset-slate" style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+        <div style="text-align:center;">
+          <div style="font-size:22px; margin-bottom:4px;">🧵</div>
+          <div style="font-size:12px; font-weight:600; color:#1a1a18;">Thread</div>
+          <div style="font-size:11px; color:#777;">singular saved asset</div>
+        </div>
+        <div style="font-size:20px; color:#ccc; font-weight:300;">→</div>
+        <div style="text-align:center;">
+          <div style="font-size:22px; margin-bottom:4px;">📁</div>
+          <div style="font-size:12px; font-weight:600; color:#1a1a18;">Collection</div>
+          <div style="font-size:11px; color:#777;">curated group of threads</div>
+        </div>
+        <div style="font-size:20px; color:#ccc; font-weight:300;">→</div>
+        <div style="text-align:center;">
+          <div style="font-size:22px; margin-bottom:4px;">🪡</div>
+          <div style="font-size:12px; font-weight:600; color:#1a1a18;">Loom</div>
+          <div style="font-size:11px; color:#777;">structured action workspace</div>
+        </div>
+      </div>
+      <p style="font-size:12px; color:#888; margin:0; font-style:italic;">⚠ Clarifying this hierarchy visually/conceptually is a high-priority IA fix per prototype feedback.</p>
+
+      <div class="feature-grid">
+        <div class="feat feat-pink">
+          <div class="feat-icon">🧵</div>
+          <p class="feat-name">Threads</p>
+          <p class="feat-desc">The atomic unit of Loomy. Any saved piece of content — an image, a link, an upload — is a Thread. Threads carry context with them: creator attribution, tags, and any notes added.</p>
+          <p class="feat-sub">Browse the Explore page → save anything → it becomes a Thread in your Collection.</p>
+        </div>
+        <div class="feat feat-amber">
+          <div class="feat-icon">📁</div>
+          <p class="feat-name">Collections</p>
+          <p class="feat-desc">Organized groups of Threads. Users can build, browse, and filter Collections by tag, theme, or project. Works as a standalone tool — no Loom required for casual or quick use cases.</p>
+          <p class="feat-sub">File folders for creative assets: lyric sheets, premade boards, outfit saves, reference packs.</p>
+        </div>
+        <div class="feat feat-purple">
+          <div class="feat-icon">🪡</div>
+          <p class="feat-name">Looms</p>
+          <p class="feat-desc">The action workspace. Pull Threads from Collections, add notes, columns, and structure. Build workflows: an art study with techniques, a capsule wardrobe with links, a room makeover checklist.</p>
+          <p class="feat-sub">Looms can contain Looms (a "Loom within a Loom" for practice boards). Supports progress tracking and sketch uploads.</p>
+        </div>
+        <div class="feat feat-teal">
+          <div class="feat-icon">👤</div>
+          <p class="feat-name">Attribution</p>
+          <p class="feat-desc">Auto-identifies the original creator on upload. Where automation fails, the community fills the gap. Proper credit travels with every Thread across the entire platform.</p>
+          <p class="feat-sub">Knowing who inspires you is part of knowing who you are creatively. Attribution is a core value, not an add-on.</p>
+        </div>
+      </div>
+
+      <div>
+        <p class="label">Explore page</p>
+        <div class="inset inset-slate">
+          <p class="inset-title">Discovery surface</p>
+          <ul class="clean">
+            <li class="pink-dot">Visual discovery feed — similar to Pinterest's explore but purpose-built for creatives</li>
+            <li class="pink-dot">Human-made content only — AI-generated content is excluded or clearly labeled (policy TBD, see feedback)</li>
+            <li class="pink-dot">Interest-based personalization — users pick creative interests at onboarding to shape their feed immediately</li>
+            <li class="pink-dot">Search by technique, style, medium, or artist name</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       03 — USER PERSONAS
+  ═══════════════════════════════════ -->
+  <div class="scard" id="personas">
+    <div class="scard-header">
+      <div class="scard-icon icon-purple">✦</div>
+      <div class="scard-header-text">
+        <p class="snum">03</p>
+        <h2>User Personas</h2>
+      </div>
+    </div>
+    <div class="scard-body">
+
+      <p class="prose">Two core personas developed from an affinity map of initial user feedback (no mockup). Both have high motivation for inspiration — they differ in how they process and act on it. Full detailed personas are in <strong>loomy_personas_v2.html</strong>.</p>
+
+      <div class="grid2">
+
+        <!-- DREAMER -->
+        <div class="persona-mini pm-d">
+          <div class="pm-header">
+            <div class="pm-avatar pm-d-avatar">✦</div>
+            <div>
+              <p class="pm-name">The Dreamer</p>
+              <p class="pm-tagline">Sees inspiration everywhere. Struggles to finish.</p>
+            </div>
+          </div>
+          <div class="pm-section">
+            <p class="pm-section-label">About them</p>
+            <p style="font-size:12.5px;color:#412402;line-height:1.55;margin:0 0 10px;">Spontaneous and feeling-led. Inspiration hits constantly but momentum dies between spark and execution. Works in creative bursts, thrives in flow state. The problem isn't finding ideas — it's holding onto them long enough to act.</p>
+          </div>
+          <div class="pm-section">
+            <p class="pm-section-label">Sources of inspiration</p>
+            <ul class="pm-list">
+              <li>Pinterest (passive, frequent, 2am scrolling)</li>
+              <li>YouTube (side-by-side with Procreate in real time)</li>
+              <li>The world around them — everything is potential inspiration</li>
+            </ul>
+          </div>
+          <div class="pm-section">
+            <p class="pm-section-label">What they need from Loomy</p>
+            <ul class="pm-list">
+              <li>Finished work to reverse-engineer, not step-by-step tutorials</li>
+              <li>Human-made only — AI art filtered out</li>
+              <li>Theme-grouped saves (mood/concept, not just chronology)</li>
+              <li>Real-time accessibility — reachable mid-flow</li>
+              <li>Spacious, uncluttered UI — friction kills the mood</li>
+            </ul>
+          </div>
+          <div class="pm-section">
+            <p class="pm-section-label">Loyalty</p>
+            <div style="display:flex; gap:12px;">
+              <div>
+                <p style="font-size:11px;color:#854F0B;font-weight:500;margin:0 0 4px;">Inspiration</p>
+                <div class="loyalty-mini">
+                  <div class="ldot ldot-d-fill"></div><div class="ldot ldot-d-fill"></div><div class="ldot ldot-d-fill"></div>
+                  <span class="lbadge lbadge-d-hi">High</span>
+                </div>
+              </div>
+              <div>
+                <p style="font-size:11px;color:#854F0B;font-weight:500;margin:0 0 4px;">Love for Loomy</p>
+                <div class="loyalty-mini">
+                  <div class="ldot ldot-d-fill"></div><div class="ldot ldot-d-fill"></div><div class="ldot ldot-d-empty"></div>
+                  <span class="lbadge lbadge-d-med">Medium</span>
+                </div>
+              </div>
+            </div>
+            <p style="font-size:11.5px;color:#633806;line-height:1.5;margin:6px 0 0;">Affinity depends on whether Loomy preserves flow. Won't tolerate friction or clutter.</p>
+          </div>
+        </div>
+
+        <!-- PLANNER -->
+        <div class="persona-mini pm-p">
+          <div class="pm-header">
+            <div class="pm-avatar pm-p-avatar">◈</div>
+            <div>
+              <p class="pm-name">The Planner</p>
+              <p class="pm-tagline">Researches before creating. Needs structure.</p>
+            </div>
+          </div>
+          <div class="pm-section">
+            <p class="pm-section-label">About them</p>
+            <p style="font-size:12.5px;color:#26215C;line-height:1.55;margin:0 0 10px;">Process-driven and detail-oriented. Never begins without a plan. Deeply cares about creative identity — wants to know who made something and why, not just what it looks like. Needs a workspace, not just a save button.</p>
+          </div>
+          <div class="pm-section">
+            <p class="pm-section-label">Sources of inspiration</p>
+            <ul class="pm-list">
+              <li>Artist research — follows specific creators as identity anchors</li>
+              <li>Curated mood boards — builds boards actively, not passively</li>
+              <li>Unexpected places — museums, streets, books — then organizes intentionally</li>
+            </ul>
+          </div>
+          <div class="pm-section">
+            <p class="pm-section-label">What they need from Loomy</p>
+            <ul class="pm-list">
+              <li>Contextual saves — artist credit, notes, and context attached to everything</li>
+              <li>Structured project folders (lyric sheets, premade boards, asset groups)</li>
+              <li>Taggable, filterable content — browsing without filters is useless</li>
+              <li>Cloud-native storage — no downloading to device</li>
+              <li>Full creative workspace, not a collection tool</li>
+            </ul>
+          </div>
+          <div class="pm-section">
+            <p class="pm-section-label">Loyalty</p>
+            <div style="display:flex; gap:12px;">
+              <div>
+                <p style="font-size:11px;color:#534AB7;font-weight:500;margin:0 0 4px;">Inspiration</p>
+                <div class="loyalty-mini">
+                  <div class="ldot ldot-p-fill"></div><div class="ldot ldot-p-fill"></div><div class="ldot ldot-p-fill"></div>
+                  <span class="lbadge lbadge-p-hi">High</span>
+                </div>
+              </div>
+              <div>
+                <p style="font-size:11px;color:#534AB7;font-weight:500;margin:0 0 4px;">Love for Loomy</p>
+                <div class="loyalty-mini">
+                  <div class="ldot ldot-p-fill"></div><div class="ldot ldot-p-fill"></div><div class="ldot ldot-p-fill"></div>
+                  <span class="lbadge lbadge-p-hi">High</span>
+                </div>
+              </div>
+            </div>
+            <p style="font-size:11.5px;color:#3C3489;line-height:1.5;margin:6px 0 0;">Most likely to become a power user. Loomy directly addresses their core frustrations around organization, context, and storage.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       04 — SCENARIOS
+  ═══════════════════════════════════ -->
+  <div class="scard" id="scenarios">
+    <div class="scard-header">
+      <div class="scard-icon icon-teal">📖</div>
+      <div class="scard-header-text">
+        <p class="snum">04</p>
+        <h2>Scenarios</h2>
+      </div>
+    </div>
+    <div class="scard-body">
+
+      <p class="prose">Two user scenarios grounding the platform in real-world use. The first shows Loomy's deepest workflow (Threads → Collections → Loom). The second shows Collections-only use, demonstrating versatility for casual users who don't need a Loom every time.</p>
+
+      <div class="scenario sc-pink">
+        <div class="sc-header">
+          <span class="sc-num">S1</span>
+          <div>
+            <p class="sc-title">Learning to Draw from References</p>
+            <p class="sc-who">Charlie — Neuroscience major + Drawing minor, aspiring comic artist</p>
+          </div>
+        </div>
+        <p class="sc-body">Charlie needs to learn how to draw heads at any angle. She starts on the Loomy Explore page, searching "head angles" and curating reference Threads into her "Anatomy Studies" Collection. She then opens a new Loom, pulls 15 Threads and organizes them by view (front, ¾, profile). As she practices, she adds notes on techniques she liked and uploads her sketches to track progress. She has a living reference system she can return to anytime.</p>
+        <div class="sc-tags">
+          <span class="sc-tag">Explore → Thread → Collection → Loom</span>
+          <span class="sc-tag">Full workflow</span>
+          <span class="sc-tag">Progress tracking</span>
+          <span class="sc-tag">Skill development</span>
+        </div>
+      </div>
+
+      <div class="scenario sc-slate">
+        <div class="sc-header">
+          <span class="sc-num">S2</span>
+          <div>
+            <p class="sc-title">Figuring Out What to Wear on a Date</p>
+            <p class="sc-who">Tyler — 22-year-old post-grad, casual user introduced by a roommate</p>
+          </div>
+        </div>
+        <p class="sc-body">Tyler has a date the next night and doesn't know what to wear. He opens Loomy (first time, roommate's suggestion), searches "men's casual outfits" and "date fits," and saves 8 outfit Threads to his "clothes." Collection. He opens the Collection and cross-checks with what he actually has in his closet, narrowing to 3 realistic options. He screenshots them and texts his roommate asking "which one?" Roommate votes for option 2. Tyler picks it and heads out. He solved his problem without ever needing to open a Loom.</p>
+        <div class="sc-tags">
+          <span class="sc-tag">Explore → Thread → Collection only</span>
+          <span class="sc-tag">Casual / low-stakes</span>
+          <span class="sc-tag">No Loom required</span>
+          <span class="sc-tag">Versatility proof</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       05 — COMPETITOR COMPARISON
+  ═══════════════════════════════════ -->
+  <div class="scard" id="competitors">
+    <div class="scard-header">
+      <div class="scard-icon icon-slate">📊</div>
+      <div class="scard-header-text">
+        <p class="snum">05</p>
+        <h2>Competitor Comparison</h2>
+      </div>
+    </div>
+    <div class="scard-body">
+
+      <p class="prose">Loomy competes with Pinterest (inspiration collection), Cosmos (visual curation), and Milanote (creative workspace). Loomy is the only platform that combines discovery, structured workflows, creator attribution, and skill development in one place.</p>
+
+      <div style="overflow-x:auto;">
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th class="loomy-col">Loomy</th>
+              <th>Pinterest</th>
+              <th>Cosmos</th>
+              <th>Milanote</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Visual Discovery Feed</td><td class="loomy-col check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="cross">✗</td></tr>
+            <tr><td>Save from Anywhere</td><td class="loomy-col check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="partial">Partial</td></tr>
+            <tr><td>Organized Collections</td><td class="loomy-col check">✓</td><td class="partial">Partial</td><td class="partial">Partial</td><td class="check">✓</td></tr>
+            <tr><td>Multi-Tag System</td><td class="loomy-col check">✓</td><td class="partial">Partial</td><td class="cross">✗</td><td class="partial">Partial</td></tr>
+            <tr><td>Automatic Creator Attribution</td><td class="loomy-col check">✓</td><td class="cross">✗</td><td class="partial">Partial</td><td class="cross">✗</td></tr>
+            <tr><td>Community-Sourced Attribution</td><td class="loomy-col check">✓</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td></tr>
+            <tr><td>Structured Workflows / Projects</td><td class="loomy-col check">✓</td><td class="cross">✗</td><td class="cross">✗</td><td class="check">✓</td></tr>
+            <tr><td>Progress Tracking</td><td class="loomy-col check">✓</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td></tr>
+            <tr><td>Mix References + Notes + Uploads</td><td class="loomy-col check">✓</td><td class="cross">✗</td><td class="cross">✗</td><td class="check">✓</td></tr>
+            <tr><td>Study Mode / Comparison View</td><td class="loomy-col check">✓</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td></tr>
+            <tr><td>Creator Discovery by Technique</td><td class="loomy-col check">✓</td><td class="cross">✗</td><td class="cross">✗</td><td class="cross">✗</td></tr>
+            <tr><td>Built for Learning / Skill Development</td><td class="loomy-col check">✓</td><td class="cross">✗</td><td class="cross">✗</td><td class="partial">Partial</td></tr>
+            <tr><td>Mobile + Web</td><td class="loomy-col check">✓</td><td class="check">✓</td><td class="partial">Partial</td><td class="check">✓</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="inset inset-yellow">
+        <p class="inset-title">Key competitive insight</p>
+        <p style="font-size:13px;line-height:1.6;color:#5C4400;margin:0;">Pinterest is the most common comparison reviewers make — and the distinction needs to be made clearer upfront. Loomy's core differentiators are the <strong>Loom workspace</strong> (structured action), <strong>automatic attribution</strong>, and <strong>skill development tools</strong> — things Pinterest doesn't do at all.</p>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

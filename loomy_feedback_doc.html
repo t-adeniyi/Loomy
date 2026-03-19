@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Loomy — Lo-Fi Prototype Feedback</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f4f0;
+      margin: 0;
+      padding: 2rem;
+      color: #1a1a18;
+    }
+    .wrap { display: flex; flex-direction: column; gap: 2rem; max-width: 900px; margin: 0 auto; }
+
+    /* ── COVER ── */
+    .cover {
+      border-radius: 20px;
+      background: linear-gradient(135deg, #FF3C6E 0%, #FF6B8A 60%, #FFB3C4 100%);
+      padding: 3rem 2.5rem 2.5rem;
+      color: #fff;
+    }
+    .cover-eyebrow { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; opacity: 0.75; margin: 0 0 10px; }
+    .cover-title { font-size: 42px; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.02em; }
+    .cover-sub { font-size: 18px; font-weight: 400; opacity: 0.88; margin: 0 0 1.75rem; }
+    .cover-meta { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+    .cover-meta-item { font-size: 13px; opacity: 0.8; }
+    .cover-meta-item strong { display: block; font-weight: 600; opacity: 1; margin-bottom: 2px; }
+
+    /* ── LEGEND ── */
+    .legend { border-radius: 14px; background: #fff; border: 0.5px solid rgba(0,0,0,0.1); padding: 1.25rem 1.75rem; }
+    .legend-title { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #888780; margin: 0 0 12px; }
+    .legend-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 5px 13px; border-radius: 20px; }
+    .badge-critical { background: #FFCCD7; color: #7B0E26; }
+    .badge-high     { background: #FEE8C4; color: #7A3F00; }
+    .badge-medium   { background: #EEEDFE; color: #3C3489; }
+    .badge-working  { background: #E5F5E8; color: #1E6B34; }
+    .badge-future   { background: #EEF0F5; color: #3D4460; }
+    .legend-desc { font-size: 12px; color: #888; }
+
+    /* ── SECTION CARD ── */
+    .scard { border-radius: 16px; border: 0.5px solid rgba(0,0,0,0.12); background: #fff; overflow: hidden; }
+    .scard-header { padding: 1.25rem 1.75rem 1rem; display: flex; align-items: center; gap: 1rem; border-bottom: 0.5px solid rgba(0,0,0,0.08); }
+    .scard-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+    .icon-green  { background: #E5F5E8; }
+    .icon-pink   { background: #FFE8EE; }
+    .icon-slate  { background: #EEF0F5; }
+    .icon-purple { background: #EEEDFE; }
+    .scard-header-text .snum { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: #aaa; margin: 0 0 2px; }
+    .scard-header-text h2 { font-size: 20px; font-weight: 600; margin: 0; color: #1a1a18; }
+    .scard-body { padding: 1.5rem 1.75rem 1.75rem; display: flex; flex-direction: column; gap: 0; }
+
+    /* ── FEEDBACK ROWS ── */
+    .fb-row {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 1.1rem 0;
+      border-bottom: 0.5px solid rgba(0,0,0,0.07);
+    }
+    .fb-row:first-child { padding-top: 0.25rem; }
+    .fb-row:last-child  { border-bottom: none; padding-bottom: 0; }
+
+    .fb-left { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 90px; flex-shrink: 0; }
+    .fb-num  { font-size: 10px; font-weight: 600; color: #bbb; letter-spacing: 0.06em; }
+
+    .fb-right { flex: 1; }
+    .fb-right h3 { font-size: 14.5px; font-weight: 600; color: #1a1a18; margin: 0 0 5px; }
+    .fb-right .desc { font-size: 13px; line-height: 1.65; color: #444; margin: 0 0 8px; }
+    .fb-right .desc:last-child { margin-bottom: 0; }
+
+    .quotes { display: flex; flex-direction: column; gap: 5px; margin-top: 8px; }
+    .quote-item {
+      font-size: 12px;
+      font-style: italic;
+      color: #777;
+      line-height: 1.55;
+      padding: 7px 11px;
+      border-radius: 8px;
+      background: #fafaf8;
+      border-left: 2.5px solid #e0e0de;
+    }
+    .quote-item .attr { font-style: normal; font-weight: 500; color: #aaa; margin-left: 6px; font-size: 11px; }
+
+    .tag-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+    .tag { font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 20px; background: #f0f0ee; color: #555; }
+
+    /* section spacer */
+    .section-spacer { height: 1rem; }
+
+    /* ── REVIEWERS ── */
+    .reviewer-grid { display: flex; flex-wrap: wrap; gap: 7px; }
+    .reviewer-chip {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 5px 12px;
+      border-radius: 20px;
+      background: #f0f0ee;
+      color: #3a3a38;
+    }
+    .reviewer-chip.prof { background: #FFE8EE; color: #CC1E42; }
+
+    /* ── STAT ROW ── */
+    .stat-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .stat { flex: 1; min-width: 120px; border-radius: 12px; padding: 1rem 1.1rem; text-align: center; }
+    .stat-n { font-size: 28px; font-weight: 700; margin: 0 0 3px; }
+    .stat-l { font-size: 11.5px; font-weight: 500; margin: 0; }
+    .stat-green  { background: #E5F5E8; }
+    .stat-green .stat-n, .stat-green .stat-l { color: #1E6B34; }
+    .stat-pink   { background: #FFE8EE; }
+    .stat-pink .stat-n, .stat-pink .stat-l { color: #CC1E42; }
+    .stat-amber  { background: #FEF3E2; }
+    .stat-amber .stat-n, .stat-amber .stat-l { color: #7A3F00; }
+    .stat-purple { background: #EEEDFE; }
+    .stat-purple .stat-n, .stat-purple .stat-l { color: #3C3489; }
+    .stat-slate  { background: #EEF0F5; }
+    .stat-slate .stat-n, .stat-slate .stat-l { color: #3D4460; }
+
+    /* label util */
+    .label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #888780; margin: 0 0 10px; }
+    .inset { border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+    .inset-slate { background: #F0F1F7; }
+    .inset-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: #3D4460; margin: 0 0 8px; }
+    .prose { font-size: 13.5px; line-height: 1.7; color: #444; margin: 0; }
+
+    @media (max-width: 600px) {
+      .stat-row { gap: 0.6rem; }
+      .stat { min-width: 90px; }
+      .fb-left { min-width: 72px; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ══════════════════════
+       COVER
+  ══════════════════════ -->
+  <div class="cover">
+    <p class="cover-eyebrow">Loomy · Lo-Fi Prototype</p>
+    <h1 class="cover-title">Peer Feedback Summary</h1>
+    <p class="cover-sub">All feedback tagged by importance, with quotes and next steps.</p>
+    <div class="cover-meta">
+      <div class="cover-meta-item"><strong>Session</strong>In-class review, March 2026</div>
+      <div class="cover-meta-item"><strong>Reviewers</strong>13 total (students + Prof. Hillman)</div>
+      <div class="cover-meta-item"><strong>Prototype stage</strong>Lo-fi mockup</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════
+       LEGEND
+  ══════════════════════ -->
+  <div class="legend">
+    <p class="legend-title">Priority tags used in this document</p>
+    <div class="legend-row">
+      <span class="badge badge-critical">★ Critical</span>
+      <span class="legend-desc">Raised by Prof. Hillman and/or multiple reviewers — must fix before hi-fi</span>
+    </div>
+    <div class="legend-row" style="margin-top:7px;">
+      <span class="badge badge-high">High</span>
+      <span class="legend-desc">Raised by multiple reviewers — address in next iteration</span>
+    </div>
+    <div class="legend-row" style="margin-top:7px;">
+      <span class="badge badge-medium">Medium</span>
+      <span class="legend-desc">Raised by one or two reviewers — worth addressing, not blocking</span>
+    </div>
+    <div class="legend-row" style="margin-top:7px;">
+      <span class="badge badge-working">✦ Working</span>
+      <span class="legend-desc">Consistent positive sentiment — keep and build on</span>
+    </div>
+    <div class="legend-row" style="margin-top:7px;">
+      <span class="badge badge-future">💡 Future</span>
+      <span class="legend-desc">Interesting ideas for later iterations — not urgent fixes</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════
+       REVIEWERS + STATS
+  ══════════════════════ -->
+  <div class="scard">
+    <div class="scard-header">
+      <div class="scard-icon icon-slate">👥</div>
+      <div class="scard-header-text">
+        <p class="snum">Overview</p>
+        <h2>Reviewers & At a Glance</h2>
+      </div>
+    </div>
+    <div class="scard-body" style="padding-top:1.25rem;">
+      <div class="stat-row">
+        <div class="stat stat-green"><p class="stat-n">13</p><p class="stat-l">Total reviewers</p></div>
+        <div class="stat stat-pink"><p class="stat-n">5</p><p class="stat-l">✦ Working well</p></div>
+        <div class="stat stat-amber"><p class="stat-n">10</p><p class="stat-l">Areas to improve</p></div>
+        <div class="stat stat-purple"><p class="stat-n">8</p><p class="stat-l">💡 Future ideas</p></div>
+      </div>
+      <p class="label">All reviewers</p>
+      <div class="reviewer-grid">
+        <span class="reviewer-chip prof">Prof. Hillman (Mikaila)</span>
+        <span class="reviewer-chip">Roundy Guerrero Garcia</span>
+        <span class="reviewer-chip">Pushpita Hossain</span>
+        <span class="reviewer-chip">Lexie Zhang</span>
+        <span class="reviewer-chip">Miraya Agarwal</span>
+        <span class="reviewer-chip">Grace Li</span>
+        <span class="reviewer-chip">Brian Lam</span>
+        <span class="reviewer-chip">David Abrahamyan</span>
+        <span class="reviewer-chip">Lily Wu</span>
+        <span class="reviewer-chip">Ryan Lin</span>
+        <span class="reviewer-chip">Ashley Adji</span>
+        <span class="reviewer-chip">Iris Ruixuan Qian</span>
+        <span class="reviewer-chip">Freida Lin</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════
+       WHAT'S WORKING
+  ══════════════════════ -->
+  <div class="scard">
+    <div class="scard-header">
+      <div class="scard-icon icon-green">✦</div>
+      <div class="scard-header-text">
+        <p class="snum">Section 1</p>
+        <h2>What's Working</h2>
+      </div>
+    </div>
+    <div class="scard-body">
+
+      <!-- 1 -->
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-working">✦ Working</span>
+          <span class="fb-num">01</span>
+        </div>
+        <div class="fb-right">
+          <h3>Visual design & color palette</h3>
+          <p class="desc">The pink palette is consistently praised as cohesive and well-suited for a creative platform. White space is widely appreciated — it feels professional, clean, and gives users breathing room. The overall design is described as polished and high-fidelity for a lo-fi stage. The undo/redo buttons and thoughtful button design were also noted.</p>
+          <div class="quotes">
+            <div class="quote-item">"Strong color palette!!! wowowowo. Whitespace for creative freedom, undo/redo buttons, a lot of thought out buttons" <span class="attr">— Ashley</span></div>
+            <div class="quote-item">"Choosing pink as the primary color actually goes so well with the overall vibe of the platform" <span class="attr">— Lexie Zhang</span></div>
+            <div class="quote-item">"The aesthetics and color palette are really nice" <span class="attr">— Brian</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">Visual design</span><span class="tag">Color palette</span><span class="tag">White space</span></div>
+        </div>
+      </div>
+
+      <!-- 2 -->
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-working">✦ Working</span>
+          <span class="fb-num">02</span>
+        </div>
+        <div class="fb-right">
+          <h3>Human-centered & anti-AI stance</h3>
+          <p class="desc">Multiple reviewers responded positively to the platform's explicit stance on keeping content human-made. The "avoid AI content" feature sparked the most discussion of any feature overall — and the majority view it as a meaningful differentiator.</p>
+          <div class="quotes">
+            <div class="quote-item">"Love the 'avoid ai content' (to be able to identify) — keeping it human-centric" <span class="attr">— Pushpita Hossain</span></div>
+            <div class="quote-item">"yayyy human-centered art platform that doesn't prefer AI" <span class="attr">— Ashley</span></div>
+            <div class="quote-item">"Platform is trying to be maintained as human-centric work, I think a good message" <span class="attr">— Brian</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">Human-centered</span><span class="tag">AI stance</span><span class="tag">Differentiation</span></div>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-working">✦ Working</span>
+          <span class="fb-num">03</span>
+        </div>
+        <div class="fb-right">
+          <h3>The "Loom" concept & custom terminology</h3>
+          <p class="desc">The term "Loom" resonates with reviewers — it's described as fun, memorable, and unique to the platform. The Loom workspace concept (connecting inspirations + work) is viewed as clever and well-matched to an artist audience.</p>
+          <div class="quotes">
+            <div class="quote-item">"I like the fun custom terms (loom) it is fun to say and adds uniqueness to the app!" <span class="attr">— Ashley</span></div>
+            <div class="quote-item">"I like that the Loom part looks like a workspace which connects to the app being specifically designed for artists" <span class="attr">— Roundy</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">Terminology</span><span class="tag">Brand</span><span class="tag">Loom concept</span></div>
+        </div>
+      </div>
+
+      <!-- 4 -->
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-working">✦ Working</span>
+          <span class="fb-num">04</span>
+        </div>
+        <div class="fb-right">
+          <h3>All-in-one creative workspace</h3>
+          <p class="desc">Reviewers appreciate the ability to keep work, inspirations, and ideas in a single unified space. Editing and adding ideas to their work and inspirations directly in-platform — without switching tools — is seen as genuinely valuable.</p>
+          <div class="quotes">
+            <div class="quote-item">"I like that users could edit and also add their ideas to their work and their other inspirations directly in one place" <span class="attr">— Miraya</span></div>
+            <div class="quote-item">"I love how the user could edit and add ideas/links to their work along with their other inspirations directly on one platform" <span class="attr">— Lexie Zhang</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">All-in-one</span><span class="tag">Workspace</span><span class="tag">Core value prop</span></div>
+        </div>
+      </div>
+
+      <!-- 5 -->
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-working">✦ Working</span>
+          <span class="fb-num">05</span>
+        </div>
+        <div class="fb-right">
+          <h3>Personalization & interest selection</h3>
+          <p class="desc">Reviewers love that users can select their creative interests during onboarding so the Explore page feels tailored immediately — not a cold, generic feed.</p>
+          <div class="quotes">
+            <div class="quote-item">"Like how the user could pick their interests so the explore page would feel more personalized immediately" <span class="attr">— Lexie Zhang</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">Onboarding</span><span class="tag">Explore page</span><span class="tag">Personalization</span></div>
+        </div>
+      </div>
+
+      <!-- 6 -->
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-working">✦ Working</span>
+          <span class="fb-num">06</span>
+        </div>
+        <div class="fb-right">
+          <h3>Prototype quality & presentation</h3>
+          <p class="desc">The prototype is consistently described as clear, carefully constructed, and high-fidelity for a lo-fi stage. The team's presentation was praised for being passionate and easy to follow. User stories were called out specifically as well thought-through.</p>
+          <div class="quotes">
+            <div class="quote-item">"The prototype is very clear and carefully constructed" <span class="attr">— Lexie Zhang</span></div>
+            <div class="quote-item">"User stories seem really nicely thought through — good work there" <span class="attr">— Prof. Hillman</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">Presentation</span><span class="tag">Prototype quality</span><span class="tag">User stories</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════
+       PRIORITY IMPROVEMENTS
+  ══════════════════════ -->
+  <div class="scard">
+    <div class="scard-header">
+      <div class="scard-icon icon-pink">⚠</div>
+      <div class="scard-header-text">
+        <p class="snum">Section 2</p>
+        <h2>Priority Areas for Improvement</h2>
+      </div>
+    </div>
+    <div class="scard-body">
+
+      <!-- C1 -->
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-critical">★ Critical</span>
+          <span class="fb-num">C1</span>
+        </div>
+        <div class="fb-right">
+          <h3>App purpose & value prop clarity</h3>
+          <p class="desc">Several reviewers said they weren't sure what the core purpose of the app is. The distinction from Pinterest — which Loomy is inevitably compared to — needs to be made clearer upfront. Reviewers also want clearer guidance on what users are meant to <em>do</em> with their collections beyond just saving things.</p>
+          <div class="quotes">
+            <div class="quote-item">"Not very clear what the purpose of the app is" <span class="attr">— Ryan Lin</span></div>
+            <div class="quote-item">"It's heavily inspired by Pinterest, which is interesting, but what makes them stand out?" <span class="attr">— Pushpita Hossain</span></div>
+            <div class="quote-item">"Right now it's not super clear what users will do with these collections — there should be recommendations for users in terms of what they wish to do with this specific piece of art" <span class="attr">— Grace Li</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">Value prop</span><span class="tag">Onboarding</span><span class="tag">Pinterest comparison</span><span class="tag">First impression</span></div>
+        </div>
+      </div>
+
+      <!-- C2 -->
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-critical">★ Critical</span>
+          <span class="fb-num">C2</span>
+        </div>
+        <div class="fb-right">
+          <h3>Two flows feel too similar</h3>
+          <p class="desc">The two user flows shown in the prototype don't feel distinct enough — they appear to solve the same problem rather than two clearly different ones. Prof. Hillman's suggested split: (1) a new user making their first Loom, and (2) a returning user revisiting saved inspiration and converting it into action.</p>
+          <div class="quotes">
+            <div class="quote-item">"These two flows feel like one flow right now. I feel like we need to see two distinct problems being solved" <span class="attr">— Prof. Hillman</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">User flows</span><span class="tag">IA</span><span class="tag">Prof. Hillman</span><span class="tag">Must fix</span></div>
+        </div>
+      </div>
+
+      <!-- C3 -->
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-critical">★ Critical</span>
+          <span class="fb-num">C3</span>
+        </div>
+        <div class="fb-right">
+          <h3>IA hierarchy: Thread vs. Loom vs. Collection</h3>
+          <p class="desc">The visual and conceptual distinction between a Thread (singular saved asset), a Loom (action workspace), and a Collection (organized group) must be clearer. This is a core IA problem — Prof. Hillman referenced the IA principle of objects as the framework for resolving it. Users need to immediately understand what each object is and how they relate to one another.</p>
+          <div class="quotes">
+            <div class="quote-item">"The difference between adding a thread and making a loom needs to feel more clear" <span class="attr">— Prof. Hillman</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">IA</span><span class="tag">Thread</span><span class="tag">Loom</span><span class="tag">Collection</span><span class="tag">Prof. Hillman</span></div>
+        </div>
+      </div>
+
+      <!-- C4 -->
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-critical">★ Critical</span>
+          <span class="fb-num">C4</span>
+        </div>
+        <div class="fb-right">
+          <h3>Navigation complexity & wayfinding</h3>
+          <p class="desc">Too many visible buttons make it hard to find specific features (e.g. customizing a Loom). The navigation bar needs to show which section is currently active. Users need clearer direction on what to click next at each step.</p>
+          <div class="quotes">
+            <div class="quote-item">"So many buttons to click, I would forget how to get to a single part of the app like customizing the Loom" <span class="attr">— Ryan Lin + Lily Wu</span></div>
+            <div class="quote-item">"The navigation flow may need more directions so users know where to click as next step" <span class="attr">— Lily Wu</span></div>
+            <div class="quote-item">"Consider your nav elements and how you show which section is active (collection, home, etc)" <span class="attr">— Prof. Hillman</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">Navigation</span><span class="tag">Wayfinding</span><span class="tag">Active state</span><span class="tag">Cognitive load</span></div>
+        </div>
+      </div>
+
+      <!-- H1 -->
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-high">High</span>
+          <span class="fb-num">H1</span>
+        </div>
+        <div class="fb-right">
+          <h3>Beginner vs. experienced user accessibility</h3>
+          <p class="desc">Multiple reviewers independently noted the app feels designed for experienced or seasoned artists. Consider a beginner mode, onboarding scaffolding, or gamification elements to welcome users who are earlier in their creative journey.</p>
+          <div class="quotes">
+            <div class="quote-item">"Slight essence that it might be designed for those with more experience — maybe have it be a little more beginner friendly?" <span class="attr">— Miraya</span></div>
+            <div class="quote-item">"Sounds like it's made for seasoned artists — is there like a beginner format / gamification to encourage someone to do work?" <span class="attr">— Brian</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">Accessibility</span><span class="tag">Onboarding</span><span class="tag">Beginner mode</span><span class="tag">Gamification</span></div>
+        </div>
+      </div>
+
+      <!-- H2 -->
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-high">High</span>
+          <span class="fb-num">H2</span>
+        </div>
+        <div class="fb-right">
+          <h3>AI content policy — needs clearer framing</h3>
+          <p class="desc">The platform's stance on AI content is the most debated topic in the feedback. Reviewers want clarity on whether it's a full ban or a labeling/tagging system. A number strongly support tagging over banning to keep the platform open and inclusive. The policy should be documented clearly in UX copy.</p>
+          <div class="quotes">
+            <div class="quote-item">"AI content — as far as out of scope — is to prevent it or encourage the creation of it? Clarified via question but would be good to add a couple more words there" <span class="attr">— Prof. Hillman</span></div>
+            <div class="quote-item">"It shouldn't be a full ban, but rather a tag on AI content so people know what was made with AI" <span class="attr">— David A.</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">AI policy</span><span class="tag">UX copy</span><span class="tag">Labeling</span><span class="tag">Content moderation</span></div>
+        </div>
+      </div>
+
+      <!-- H3 -->
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-high">High</span>
+          <span class="fb-num">H3</span>
+        </div>
+        <div class="fb-right">
+          <h3>Artist attribution & credits system</h3>
+          <p class="desc">Multiple reviewers flagged that the platform needs a clear, visible system for crediting artists and linking to original creators. Transparency around attribution is flagged as essential — not just nice to have. Commenting-based accreditation was called out as a particularly interesting mechanic.</p>
+          <div class="quotes">
+            <div class="quote-item">"I think it is also important to allow others who post art to be able to credit those that inspired them, and directly linking these credits to the creators — transparency is essential" <span class="attr">— Grace Li</span></div>
+            <div class="quote-item">"I think artists' credit should be included in the website" <span class="attr">— Freida Lin</span></div>
+            <div class="quote-item">"Commenting-based accreditation of the art is cool" <span class="attr">— Brian</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">Attribution</span><span class="tag">Creator credit</span><span class="tag">IA</span><span class="tag">Transparency</span></div>
+        </div>
+      </div>
+
+      <!-- M1 -->
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-medium">Medium</span>
+          <span class="fb-num">M1</span>
+        </div>
+        <div class="fb-right">
+          <h3>Thread → Collection UX step feels disconnected</h3>
+          <p class="desc">The two UI elements on the thread-to-collection step feel separate from each other due to being separately contained. Consider unifying their layout or flow so the relationship between them reads as a single cohesive step.</p>
+          <div class="quotes">
+            <div class="quote-item">"Consider the UX on the thread to collection step. Those 2 UI elements feel separate due to them being separately contained" <span class="attr">— Prof. Hillman</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">UX</span><span class="tag">Thread → Collection</span><span class="tag">Visual cohesion</span></div>
+        </div>
+      </div>
+
+      <!-- M2 -->
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-medium">Medium</span>
+          <span class="fb-num">M2</span>
+        </div>
+        <div class="fb-right">
+          <h3>Onboarding — option to skip steps</h3>
+          <p class="desc">Allow users to skip the onboarding flow and jump directly to the main page. Not everyone wants to be walked through setup before exploring.</p>
+          <div class="quotes">
+            <div class="quote-item">"For the sign-in and onboarding step, can the users choose to skip the steps and just go to the main page and start using?" <span class="attr">— Lexie Zhang</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">Onboarding</span><span class="tag">Skip option</span><span class="tag">User autonomy</span></div>
+        </div>
+      </div>
+
+      <!-- M3 -->
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-medium">Medium</span>
+          <span class="fb-num">M3</span>
+        </div>
+        <div class="fb-right">
+          <h3>Button size & UX dimensions</h3>
+          <p class="desc">Some buttons feel small, especially in a mobile context. Desktop layout may help but it's worth reviewing touch targets. Overall dimensions of certain UI elements were flagged as off.</p>
+          <div class="quotes">
+            <div class="quote-item">"I do think some of the dimensions are off (UX wise for buttons and such)" <span class="attr">— Pushpita Hossain</span></div>
+            <div class="quote-item">"Buttons are a bit small but on desktop is probably better" <span class="attr">— Ashley</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">Button sizing</span><span class="tag">Mobile UX</span><span class="tag">Touch targets</span></div>
+        </div>
+      </div>
+
+      <!-- M4 -->
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-medium">Medium</span>
+          <span class="fb-num">M4</span>
+        </div>
+        <div class="fb-right">
+          <h3>Desktop vs. app — justify the decision</h3>
+          <p class="desc">The choice to design desktop-first needs to be better supported in user stories. Prof. Hillman noted the Loom page might be what sells the desktop experience — make that argument explicit. iPad was also raised as a potentially natural fit.</p>
+          <div class="quotes">
+            <div class="quote-item">"It's fine to consider this as a desktop experience, but I also don't see why it couldn't be an app. Maybe the loom page sells me on why it's a better desktop experience" <span class="attr">— Prof. Hillman</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">Platform decision</span><span class="tag">Desktop</span><span class="tag">iPad</span><span class="tag">User stories</span></div>
+        </div>
+      </div>
+
+      <!-- M5 -->
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-medium">Medium</span>
+          <span class="fb-num">M5</span>
+        </div>
+        <div class="fb-right">
+          <h3>Prototype fidelity — intentional?</h3>
+          <p class="desc">A few reviewers noted the prototype felt unusually high-fidelity for a lo-fi stage. Consider whether this is by design or whether the team wants to dial back fidelity to focus on flows.</p>
+          <div class="quotes">
+            <div class="quote-item">"Very similar to Pinterest, very high fidelity for a lo-fi flow" <span class="attr">— Ryan Lin</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">Prototype fidelity</span><span class="tag">Process</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════
+       FUTURE IDEAS
+  ══════════════════════ -->
+  <div class="scard">
+    <div class="scard-header">
+      <div class="scard-icon icon-purple">💡</div>
+      <div class="scard-header-text">
+        <p class="snum">Section 3</p>
+        <h2>Future Ideas & Interesting Observations</h2>
+      </div>
+    </div>
+    <div class="scard-body">
+
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-future">💡 Future</span>
+          <span class="fb-num">F1</span>
+        </div>
+        <div class="fb-right">
+          <h3>Community & collaboration</h3>
+          <p class="desc">Multiple reviewers asked whether Loomy is collaborative. A "community collaborative Loom" was raised as an exciting future feature — a shared workspace where multiple users can contribute. Community-built templates were also suggested as a way to add structure and social engagement.</p>
+          <div class="quotes">
+            <div class="quote-item">"Community collaborative loom?" <span class="attr">— Prof. Hillman</span></div>
+            <div class="quote-item">"Maybe add more community / human-centered aspects — community built templates" <span class="attr">— Ashley</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">Collaboration</span><span class="tag">Community</span><span class="tag">Templates</span></div>
+        </div>
+      </div>
+
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-future">💡 Future</span>
+          <span class="fb-num">F2</span>
+        </div>
+        <div class="fb-right">
+          <h3>Expanding beyond visual art</h3>
+          <p class="desc">The platform's concept extends naturally to other creative disciplines — dance, music, film. Video support could make Loomy relevant to a much wider creative audience.</p>
+          <div class="quotes">
+            <div class="quote-item">"Could this app be applied to other creative projects other than visual art? For instance a dance project? Can the user add videos?" <span class="attr">— Lexie Zhang</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">Scope expansion</span><span class="tag">Video</span><span class="tag">Dance / music / film</span></div>
+        </div>
+      </div>
+
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-future">💡 Future</span>
+          <span class="fb-num">F3</span>
+        </div>
+        <div class="fb-right">
+          <h3>Design templates & creative prompts</h3>
+          <p class="desc">Offering design templates or challenge projects could help users get started faster and spark creativity when they're not sure where to begin.</p>
+          <div class="quotes">
+            <div class="quote-item">"Design templates or challenge projects that spark creativity" <span class="attr">— Lily Wu</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">Templates</span><span class="tag">Creative prompts</span><span class="tag">Beginner use</span></div>
+        </div>
+      </div>
+
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-future">💡 Future</span>
+          <span class="fb-num">F4</span>
+        </div>
+        <div class="fb-right">
+          <h3>Explore without logging in</h3>
+          <p class="desc">Allowing guests to preview content before committing to sign-up (similar to Pinterest's public browse) could lower the barrier to entry and increase adoption.</p>
+          <div class="quotes">
+            <div class="quote-item">"Being able to explore even without logging in might make the app more inviting, so potential users get a sample of what they can experience" <span class="attr">— Roundy</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">Guest access</span><span class="tag">Onboarding</span><span class="tag">Adoption</span></div>
+        </div>
+      </div>
+
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-future">💡 Future</span>
+          <span class="fb-num">F5</span>
+        </div>
+        <div class="fb-right">
+          <h3>Integration with design software</h3>
+          <p class="desc">Interest in connecting Loomy with external tools like Figma — letting users pull saved assets or references directly into their design workflow.</p>
+          <div class="quotes">
+            <div class="quote-item">"The connection between each design software can be considered" <span class="attr">— Freida Lin</span></div>
+            <div class="quote-item">"Importing/pulling these images into other locations? Kind of working through the details" <span class="attr">— Brian</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">Integrations</span><span class="tag">Figma</span><span class="tag">Export</span></div>
+        </div>
+      </div>
+
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-future">💡 Future</span>
+          <span class="fb-num">F6</span>
+        </div>
+        <div class="fb-right">
+          <h3>Comment section — format & moderation</h3>
+          <p class="desc">Questions arose around what comments look like on the platform — are they text-only, or do they involve visual remixes ("re-Looms")? Copyright issues and negative comment moderation are open questions that need a policy framework.</p>
+          <div class="quotes">
+            <div class="quote-item">"Is comments a visual comments only like remixes... re-looms?" <span class="attr">— Prof. Hillman</span></div>
+            <div class="quote-item">"How to control comments being negative. Copyright issue." <span class="attr">— Lily Wu</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">Comments</span><span class="tag">Re-Looms</span><span class="tag">Moderation</span><span class="tag">Copyright</span></div>
+        </div>
+      </div>
+
+      <div class="fb-row">
+        <div class="fb-left">
+          <span class="badge badge-future">💡 Future</span>
+          <span class="fb-num">F7</span>
+        </div>
+        <div class="fb-right">
+          <h3>Recommendations within collections</h3>
+          <p class="desc">Suggest what users might want to <em>do</em> with a particular saved piece or collection — guiding them from saving to acting, making the inspiration-to-action bridge more explicit.</p>
+          <div class="quotes">
+            <div class="quote-item">"There should be recommendations for users in terms of what they wish to do with this specific piece of art" <span class="attr">— Grace Li</span></div>
+          </div>
+          <div class="tag-row"><span class="tag">Recommendations</span><span class="tag">Collections</span><span class="tag">Inspiration → action</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════
+       NEXT STEPS
+  ══════════════════════ -->
+  <div class="scard">
+    <div class="scard-header">
+      <div class="scard-icon icon-pink">→</div>
+      <div class="scard-header-text">
+        <p class="snum">Section 4</p>
+        <h2>Suggested Next Steps</h2>
+      </div>
+    </div>
+    <div class="scard-body">
+
+      <p class="prose" style="margin-bottom:1.25rem;">Based on the feedback above, prioritized in order. Critical items should be resolved before moving to hi-fi.</p>
+
+      <div class="inset inset-slate">
+        <p class="inset-title">Critical — fix before hi-fi</p>
+
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div style="display:flex; gap:10px; align-items:flex-start;">
+            <div style="width:20px;height:20px;border-radius:50%;border:2px solid #FF3C6E;flex-shrink:0;margin-top:1px;"></div>
+            <div><p style="font-size:13.5px;font-weight:600;color:#1a1a18;margin:0 0 2px;">Add a clearer opening screen / tagline that differentiates Loomy from Pinterest <span class="badge badge-critical" style="font-size:10px;padding:2px 8px;vertical-align:middle;">C1</span></p></div>
+          </div>
+          <div style="display:flex; gap:10px; align-items:flex-start;">
+            <div style="width:20px;height:20px;border-radius:50%;border:2px solid #FF3C6E;flex-shrink:0;margin-top:1px;"></div>
+            <div><p style="font-size:13.5px;font-weight:600;color:#1a1a18;margin:0 0 2px;">Redesign the two user flows to solve distinctly different problems (new user setup vs. returning user inspo → action) <span class="badge badge-critical" style="font-size:10px;padding:2px 8px;vertical-align:middle;">C2</span></p></div>
+          </div>
+          <div style="display:flex; gap:10px; align-items:flex-start;">
+            <div style="width:20px;height:20px;border-radius:50%;border:2px solid #FF3C6E;flex-shrink:0;margin-top:1px;"></div>
+            <div><p style="font-size:13.5px;font-weight:600;color:#1a1a18;margin:0 0 2px;">Clarify the IA hierarchy: Thread → Collection → Loom — make it visually and conceptually distinct <span class="badge badge-critical" style="font-size:10px;padding:2px 8px;vertical-align:middle;">C3</span></p></div>
+          </div>
+          <div style="display:flex; gap:10px; align-items:flex-start;">
+            <div style="width:20px;height:20px;border-radius:50%;border:2px solid #FF3C6E;flex-shrink:0;margin-top:1px;"></div>
+            <div><p style="font-size:13.5px;font-weight:600;color:#1a1a18;margin:0 0 2px;">Add active nav state indicators so users always know where they are <span class="badge badge-critical" style="font-size:10px;padding:2px 8px;vertical-align:middle;">C4</span></p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="inset" style="background:#FFF7EE;">
+        <p class="inset-title" style="color:#7A3F00;">High — address in next iteration</p>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div style="display:flex; gap:10px; align-items:flex-start;">
+            <div style="width:20px;height:20px;border-radius:50%;border:2px solid #F5A623;flex-shrink:0;margin-top:1px;"></div>
+            <div><p style="font-size:13.5px;font-weight:600;color:#1a1a18;margin:0 0 2px;">Address beginner accessibility — consider onboarding scaffolding or a "getting started" mode <span class="badge badge-high" style="font-size:10px;padding:2px 8px;vertical-align:middle;">H1</span></p></div>
+          </div>
+          <div style="display:flex; gap:10px; align-items:flex-start;">
+            <div style="width:20px;height:20px;border-radius:50%;border:2px solid #F5A623;flex-shrink:0;margin-top:1px;"></div>
+            <div><p style="font-size:13.5px;font-weight:600;color:#1a1a18;margin:0 0 2px;">Define and document the AI content policy (label/tag vs. full ban) — reflect it clearly in UX copy <span class="badge badge-high" style="font-size:10px;padding:2px 8px;vertical-align:middle;">H2</span></p></div>
+          </div>
+          <div style="display:flex; gap:10px; align-items:flex-start;">
+            <div style="width:20px;height:20px;border-radius:50%;border:2px solid #F5A623;flex-shrink:0;margin-top:1px;"></div>
+            <div><p style="font-size:13.5px;font-weight:600;color:#1a1a18;margin:0 0 2px;">Design a clear artist attribution/credit system into the platform IA as a first-class feature <span class="badge badge-high" style="font-size:10px;padding:2px 8px;vertical-align:middle;">H3</span></p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="inset" style="background:#F3F2FE;">
+        <p class="inset-title" style="color:#3C3489;">Medium — worth addressing, not blocking</p>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div style="display:flex; gap:10px; align-items:flex-start;">
+            <div style="width:20px;height:20px;border-radius:50%;border:2px solid #7F77DD;flex-shrink:0;margin-top:1px;"></div>
+            <div><p style="font-size:13.5px;font-weight:600;color:#1a1a18;margin:0 0 2px;">Fix the Thread → Collection UX step so the two elements feel unified <span class="badge badge-medium" style="font-size:10px;padding:2px 8px;vertical-align:middle;">M1</span></p></div>
+          </div>
+          <div style="display:flex; gap:10px; align-items:flex-start;">
+            <div style="width:20px;height:20px;border-radius:50%;border:2px solid #7F77DD;flex-shrink:0;margin-top:1px;"></div>
+            <div><p style="font-size:13.5px;font-weight:600;color:#1a1a18;margin:0 0 2px;">Add a "skip onboarding" option for returning or confident users <span class="badge badge-medium" style="font-size:10px;padding:2px 8px;vertical-align:middle;">M2</span></p></div>
+          </div>
+          <div style="display:flex; gap:10px; align-items:flex-start;">
+            <div style="width:20px;height:20px;border-radius:50%;border:2px solid #7F77DD;flex-shrink:0;margin-top:1px;"></div>
+            <div><p style="font-size:13.5px;font-weight:600;color:#1a1a18;margin:0 0 2px;">Review button sizing and touch targets, especially for mobile contexts <span class="badge badge-medium" style="font-size:10px;padding:2px 8px;vertical-align:middle;">M3</span></p></div>
+          </div>
+          <div style="display:flex; gap:10px; align-items:flex-start;">
+            <div style="width:20px;height:20px;border-radius:50%;border:2px solid #7F77DD;flex-shrink:0;margin-top:1px;"></div>
+            <div><p style="font-size:13.5px;font-weight:600;color:#1a1a18;margin:0 0 2px;">Document and justify the desktop-first decision more explicitly in user stories <span class="badge badge-medium" style="font-size:10px;padding:2px 8px;vertical-align:middle;">M4</span></p></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
